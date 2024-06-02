@@ -1,6 +1,10 @@
 package com.example.telegrambotweather.Component;
 
+import com.example.telegrambotweather.Dispatcher;
+import com.example.telegrambotweather.Model.UserRequest;
+import com.example.telegrambotweather.Model.UserSession;
 import com.example.telegrambotweather.Service.MessageService;
+import com.example.telegrambotweather.Service.UserSessionService;
 import com.example.telegrambotweather.Service.WeatherService;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +36,37 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private WeatherService weatherService;
     @Autowired
     private MessageService messageService;
-    private Map<Long, String> pendingFunction = new HashMap<>();
-    private boolean isActive;
+     private boolean isActive;
+    private final Dispatcher dispatcher;
+    private final UserSessionService userSessionService;
+
+    public MyTelegramBot(Dispatcher dispatcher,UserSessionService userSessionService) {
+        this.dispatcher = dispatcher;
+        this.userSessionService=userSessionService;
+
+    }
+    @Override
+    public void onUpdateReceived(Update update) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            String textFromUser = update.getMessage().getText();
+            Long userId = update.getMessage().getFrom().getId();
+
+
+            Long chatId = update.getMessage().getChatId();
+            UserSession session = userSessionService.getSession(chatId);
+
+            UserRequest userRequest = UserRequest
+                    .builder()
+                    .update(update)
+                    .userSession(session)
+                    .chatId(chatId)
+                    .build();
+
+            boolean dispatched = dispatcher.dispatch(userRequest);
+
+        }
+    }
+
     @Override
     public String getBotUsername() {
         return botUsername;
@@ -44,51 +77,5 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         return botToken;
     }
 
-    @Override
-    public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
 
-            if(messageText.equals("/start")&& !isActive){
-                isActive=true;
-                SendMessage sendMessage=new SendMessage();
-                sendMessage.setText("Hi, Welcom the Weather Bot!\nselect a function:");
-                sendMessage.setChatId(String.valueOf(chatId));
-                sendMessage.setReplyMarkup(getMainMenuKeyboard());
-                messageService.sendMessage(this,sendMessage);
-
-
-            }else if(messageText.equals("/stop")){
-                isActive=false;
-                messageService.sendRemoveKeyboard(this, chatId, "Bot Stopped!");
-            }else if(messageText.equals("Current Weather")){
-                messageService.sendMessage(this,chatId,"Enter the City:");
-                weatherService.getWeather(messageText);
-            }
-        }
-    }
-
-
-    public ReplyKeyboardMarkup getMainMenuKeyboard() {
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        KeyboardRow row1 = new KeyboardRow();
-        row1.add(new KeyboardButton("Current Weather"));
-        row1.add(new KeyboardButton("Forecast 4 days"));
-
-        KeyboardRow row2 = new KeyboardRow();
-        row2.add(new KeyboardButton("Forecast 16 days"));
-        row2.add(new KeyboardButton("Forecast 30 days"));
-
-        keyboard.add(row1);
-        keyboard.add(row2);
-
-        keyboardMarkup.setKeyboard(keyboard);
-        keyboardMarkup.setResizeKeyboard(true);
-        keyboardMarkup.setOneTimeKeyboard(false);
-
-        return keyboardMarkup;
-    }
 }
