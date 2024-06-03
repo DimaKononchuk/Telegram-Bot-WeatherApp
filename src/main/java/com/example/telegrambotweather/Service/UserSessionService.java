@@ -1,6 +1,7 @@
 package com.example.telegrambotweather.Service;
 
 import com.example.telegrambotweather.Model.UserSession;
+import com.example.telegrambotweather.enums.ConversationState;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class UserSessionService {
         return userSessionMap.getOrDefault(chatId, UserSession
                 .builder()
                 .chatId(chatId)
+                        .state(ConversationState.START)
                 .build());
     }
 

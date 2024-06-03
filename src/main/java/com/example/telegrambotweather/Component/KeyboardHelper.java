@@ -5,6 +5,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 
@@ -45,25 +47,38 @@ public class KeyboardHelper {
     public ReplyKeyboardMarkup buildMenuTypeWeather(){
         List<KeyboardButton> buttonsColumn1 = List.of(
                 new KeyboardButton("Current Weather Data"),
-                new KeyboardButton("Forecast 4 days"));
-        List<KeyboardButton> buttonsColumn2 = List.of(
-                new KeyboardButton("Forecast 16 days"),
-                new KeyboardButton("Forecast 30 days"));
+                new KeyboardButton("3-hour Forecast 5 days"));
 
         KeyboardRow row1 = new KeyboardRow(buttonsColumn1);
 
-        KeyboardRow row2 = new KeyboardRow(buttonsColumn2);//BTN_CANCEL
+
         return ReplyKeyboardMarkup.builder()
-                .keyboard(List.of(row1,row2))
+                .keyboard(List.of(row1))
+                .selective(true)
+                .resizeKeyboard(true)
+                .oneTimeKeyboard(true)
+                .build();
+
+    }
+    public ReplyKeyboardMarkup buildMenuWithCancel(LinkedHashSet<String> list) {
+        KeyboardRow keyboardRow = new KeyboardRow();
+        keyboardRow.add("Cancel\uD83D\uDDD9");
+        KeyboardRow keyboardRow1 = new KeyboardRow();
+        List<String> list1;
+        for (String city:list){
+            keyboardRow1.add(city);
+
+        }
+        return ReplyKeyboardMarkup.builder()
+                .keyboard(List.of(keyboardRow1,keyboardRow))
                 .selective(true)
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(false)
                 .build();
-
     }
     public ReplyKeyboardMarkup buildMenuWithCancel() {
         KeyboardRow keyboardRow = new KeyboardRow();
-        keyboardRow.add("BTN_CANCEL");
+        keyboardRow.add("Cancel\uD83D\uDDD9");
 
         return ReplyKeyboardMarkup.builder()
                 .keyboard(List.of(keyboardRow))

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.Locale;
 @Service
@@ -18,7 +19,7 @@ public class WeatherService {
 
 
 
-    public String getWeather(String city) {
+    public String getWeather(String city) throws HttpClientErrorException.NotFound  {
         String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + weatherApi + "&units=metric";
         try {
             JsonNode response = restTemplate.getForObject(url, JsonNode.class);
@@ -33,6 +34,8 @@ public class WeatherService {
             } else {
                 return "Could not fetch weather data.";
             }
+        } catch (HttpClientErrorException.NotFound e) {
+            return "City not found, please try again⤵️";
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }

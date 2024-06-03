@@ -11,34 +11,32 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 @Component
-public class StartCommandHandler extends UserRequestHandler {
+public class MainMenuHandle extends UserRequestHandler {
 
-    private static String command = "/start";
+    public static String  cancel_data= "Cancel\uD83D\uDDD9";
 
     private final TelegramService telegramService;
     private final KeyboardHelper keyboardHelper;
     private final UserSessionService userSessionService;
 
-    public StartCommandHandler(TelegramService telegramService, KeyboardHelper keyboardHelper, UserSessionService userSessionService) {
+    public MainMenuHandle(TelegramService telegramService, KeyboardHelper keyboardHelper, UserSessionService userSessionService) {
         this.telegramService = telegramService;
         this.keyboardHelper = keyboardHelper;
         this.userSessionService = userSessionService;
     }
 
     @Override
-    public boolean isApplicable(UserRequest userRequest) {
-        return isCommand(userRequest.getUpdate(), command);
+    public boolean isApplicable(UserRequest request) {
+
+        return isTextMessage(request.getUpdate(), cancel_data) || request.getUserSession().getState().equals(ConversationState.WAITING_FOR_CLICK_MENU) ;
     }
 
     @Override
-    public void handle(UserRequest request) {
-//        ReplyKeyboard replyKeyboard = keyboardHelper.buildMenuTypeWeather();
+    public void handle(UserRequest dispatchRequest) {
         ReplyKeyboard replyKeyboard = keyboardHelper.buildMenuTypeWeather();
-        telegramService.sendMessage(request.getChatId(),
-                "\uD83D\uDC4BHi! Welcome to the Weather Bot!");
-        telegramService.sendMessage(request.getChatId(),
-                "Choose from the menu below ⤵️",replyKeyboard);
-        UserSession userSession = request.getUserSession();
+        telegramService.sendMessage(dispatchRequest.getChatId(),
+                "Choose from the menu below  ⤵️", replyKeyboard);
+        UserSession userSession = dispatchRequest.getUserSession();
         userSession.setState(ConversationState.WAITING_FOR_CLICK_MENU);
         userSessionService.saveSession(userSession.getChatId(), userSession);
     }

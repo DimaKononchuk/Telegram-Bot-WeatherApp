@@ -14,6 +14,8 @@ import java.util.List;
 @Component
 public class CurrentCityWeatherHandler extends UserRequestHandler {
     public static String  current_data= "Current Weather Data";
+    public static String  cancel_data="Cancel\uD83D\uDDD9";
+
 
     private final TelegramService telegramService;
     private final KeyboardHelper keyboardHelper;
@@ -32,12 +34,16 @@ public class CurrentCityWeatherHandler extends UserRequestHandler {
 
     @Override
     public void handle(UserRequest dispatchRequest) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = keyboardHelper.buildCitiesMenu(List.of("dsf","dfs"));
-        telegramService.sendMessage(dispatchRequest.getChatId(),"Enter the City⤵️");
+        ReplyKeyboardMarkup replyKeyboardMarkup = keyboardHelper.buildMenuWithCancel();
+        telegramService.sendMessage(dispatchRequest.getChatId(),"Enter the City⤵️",replyKeyboardMarkup);
 
         UserSession userSession = dispatchRequest.getUserSession();
         userSession.setState(ConversationState.WAITING_FOR_CITY);
         userSessionService.saveSession(userSession.getChatId(), userSession);
+        if( dispatchRequest.getUpdate().getMessage().getText().equals(cancel_data)){
+            userSession.setState(ConversationState.WAITING_FOR_CLICK_MENU);
+            userSessionService.saveSession(userSession.getChatId(), userSession);
+        }
     }
 
     @Override

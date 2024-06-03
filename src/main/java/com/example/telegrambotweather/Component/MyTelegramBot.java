@@ -6,6 +6,7 @@ import com.example.telegrambotweather.Model.UserSession;
 import com.example.telegrambotweather.Service.MessageService;
 import com.example.telegrambotweather.Service.UserSessionService;
 import com.example.telegrambotweather.Service.WeatherService;
+import com.example.telegrambotweather.enums.ConversationState;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
             Long chatId = update.getMessage().getChatId();
             UserSession session = userSessionService.getSession(chatId);
-
+            //session.setState(userSessionService.getSession(chatId).getState());
             UserRequest userRequest = UserRequest
                     .builder()
                     .update(update)
