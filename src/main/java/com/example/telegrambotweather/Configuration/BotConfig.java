@@ -1,6 +1,7 @@
 package com.example.telegrambotweather.Configuration;
 
 import com.example.telegrambotweather.Component.MyTelegramBot;
+import com.example.telegrambotweather.Model.History;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -19,5 +20,8 @@ public class BotConfig {
 
         return botsApi;
     }
-
+//    @Bean
+//    public History<String> historyList() {
+//        return new History<>();
+//    }
 }

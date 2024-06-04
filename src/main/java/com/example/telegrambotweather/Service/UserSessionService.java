@@ -1,5 +1,6 @@
 package com.example.telegrambotweather.Service;
 
+import com.example.telegrambotweather.Model.History;
 import com.example.telegrambotweather.Model.UserSession;
 import com.example.telegrambotweather.enums.ConversationState;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ public class UserSessionService {
                 .builder()
                 .chatId(chatId)
                         .state(ConversationState.START)
+                        .history(new History<>())
                 .build());
     }
 

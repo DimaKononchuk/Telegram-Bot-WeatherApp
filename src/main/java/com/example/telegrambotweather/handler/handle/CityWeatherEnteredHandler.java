@@ -23,7 +23,8 @@ public class CityWeatherEnteredHandler extends UserRequestHandler {
     private final TelegramService telegramService;
     private final KeyboardHelper keyboardHelper;
     private final UserSessionService userSessionService;
-    public static History<String> historyList=new History<>(3);
+//    @Autowired
+//    public  History<String> historyList;
     @Autowired
     private WeatherService weatherService;
 
@@ -45,15 +46,17 @@ public class CityWeatherEnteredHandler extends UserRequestHandler {
         ReplyKeyboardMarkup replyKeyboardMarkup;
         String city = userRequest.getUpdate().getMessage().getText();
         String message=weatherService.getWeather(city);
+        UserSession session = userRequest.getUserSession();
         if(!message.equals("City not found, please try again⤵️")){
-            historyList.add(city);
+            session.addHistory(city);
+
         }
-        System.out.println(historyList.getHistory());
-        replyKeyboardMarkup = keyboardHelper.buildMenuWithCancel(historyList.getHistory());
+
+        replyKeyboardMarkup = keyboardHelper.buildMenuWithCancel(session.getHistory().getHistory());
         telegramService.sendMessage(userRequest.getChatId(),message,replyKeyboardMarkup);
 
 
-        UserSession session = userRequest.getUserSession();
+
         session.setCity(city);
         session.setState(ConversationState.WAITING_FOR_CITY);
         userSessionService.saveSession(userRequest.getChatId(), session);

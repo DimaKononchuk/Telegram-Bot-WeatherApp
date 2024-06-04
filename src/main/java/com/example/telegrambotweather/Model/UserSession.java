@@ -11,4 +11,10 @@ public class UserSession {
     private ConversationState state;
     private String city;
     private String text;
+    private History history;
+
+    public void addHistory(String city){
+        history.add(city);
+    }
+
 }

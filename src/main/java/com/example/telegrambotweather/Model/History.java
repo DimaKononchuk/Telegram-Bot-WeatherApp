@@ -2,21 +2,20 @@ package com.example.telegrambotweather.Model;
 
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Data
+@Component
 
 public class History<T> implements Iterable<T>{
 
-    private final int maxSize;
+    private final int maxSize=3;
 
     @Getter
     private LinkedHashSet<T> history=new LinkedHashSet<>();
-
-    public History(int maxSize) {
-        this.maxSize = maxSize;
-    }
 
     public void add(T item) {
         if (history.contains(item)) {
