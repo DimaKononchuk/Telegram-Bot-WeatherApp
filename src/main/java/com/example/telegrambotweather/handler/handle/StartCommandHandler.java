@@ -35,7 +35,7 @@ public class StartCommandHandler extends UserRequestHandler {
 //        ReplyKeyboard replyKeyboard = keyboardHelper.buildMenuTypeWeather();
         ReplyKeyboard replyKeyboard = keyboardHelper.buildMenuTypeWeather();
         telegramService.sendMessage(request.getChatId(),
-                "\uD83D\uDC4BHi! Welcome to the Weather Bot!");
+                "\uD83D\uDC4BHi\\! Welcome to the Weather Bot\\!");
         telegramService.sendMessage(request.getChatId(),
                 "Choose from the menu below ⤵️",replyKeyboard);
         UserSession userSession = request.getUserSession();

@@ -4,17 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.*;
 
-@Data
+
 @Setter
 @Getter
+@Component
 public class WeatherCity {
 
     private String City;
@@ -30,10 +29,14 @@ public class WeatherCity {
     private String sunrise;
     private String sunset;
 
+    private List<LocalTime> timeList=new ArrayList<>();
+    private List<LocalDate> dateList=new ArrayList<>();
+
     private final DateTimeFormatter DateTimeformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final DateTimeFormatter Timeformatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public WeatherCity(JsonNode json){
+    public WeatherCity(){};
+    public String  getWeatherCity(JsonNode json){
         City=json.path("name").asText();
         Country=new Locale("",json.path("sys").path("country").asText()).getDisplayCountry(Locale.ENGLISH);
         ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(json.path("timezone").asInt());
@@ -47,10 +50,6 @@ public class WeatherCity {
         System.out.println(timeOffset);
         sunset = LocalDateTime.ofInstant(Instant.ofEpochSecond(json.path("sys").path("sunset").asInt()), ZoneId.of(String.format("UTC+%s",timeOffset))).format(Timeformatter);
         sunrise = LocalDateTime.ofInstant(Instant.ofEpochSecond(json.path("sys").path("sunrise").asInt()), ZoneId.of(String.format("UTC+%s",timeOffset))).format(Timeformatter);
-
-    }
-    @Override
-    public String toString(){
         return "City: "+City+";\n"+
                 "Country: "+Country+";\n"+
                 "Temperature: "+temperature+"°C;\n"+
@@ -58,5 +57,29 @@ public class WeatherCity {
                 "Description: "+weatherDescription+";\n"+
                 "Sunset: "+sunset+";\n"+
                 "Sunrise: "+sunrise+";\n";
+    }
+
+
+    public void setDateTimeList(JsonNode json) {
+
+        for(JsonNode time:json.path("list")){
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            // Перетворюємо рядок у LocalDateTime
+            LocalDateTime localDateTime = LocalDateTime.parse(time.path("dt_txt").asText(), dateTimeFormatter);
+            // Витягуємо лише дату
+            LocalDate localDate = localDateTime.toLocalDate();
+            LocalTime localTime=localDateTime.toLocalTime();
+            if(!dateList.contains(localDate)){
+                dateList.add(localDate);
+            }
+            if(!timeList.contains(localTime)){
+                timeList.add(localTime);
+            }
+
+
+        }
+        System.out.println(dateList);
+        System.out.println(timeList);
+
     }
 }
