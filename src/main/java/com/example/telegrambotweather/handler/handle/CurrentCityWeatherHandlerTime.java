@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
+import java.time.LocalDate;
+
 @Component
 public class CurrentCityWeatherHandlerTime extends UserRequestHandler {
     public static String  current_data= "3-hour Forecast 5 days";
@@ -32,26 +34,19 @@ public class CurrentCityWeatherHandlerTime extends UserRequestHandler {
 
     @Override
     public boolean isApplicable(UserRequest request) {
-        System.out.println(request.getUpdate().hasCallbackQuery());
-        return request.getUserSession().getDate()!=null;
+        System.out.println(weatherService.isValidDate(request.getUpdate().getMessage().toString()));
+        return weatherService.isValidDate(request.getUpdate().getMessage().getText().toString());
     }
 
     @Override
     public void handle(UserRequest dispatchRequest) {
         UserSession userSession = dispatchRequest.getUserSession();
-
-        ReplyKeyboardMarkup inlineKeyboardMarkup = keyboardHelper.ReplybuildMenuListDate(weatherService.getWeatherDays().getDateList());
+        ReplyKeyboardMarkup inlineKeyboardMarkup = keyboardHelper.ReplybuildMenuListTime(weatherService.getWeatherDays().getTimeList());
         telegramService.sendMessage(dispatchRequest.getChatId(),"Enter the Time⤵️ \\(select from the menu\\)",inlineKeyboardMarkup);
-        System.out.println("date "+userSession.getDate().toString());
-        userSession.setState(ConversationState.WAITING_FOR_INLINE_DATE);
+        userSession.setDate(dispatchRequest.getUpdate().getMessage().getText().toString());
+        userSession.setState(ConversationState.WAITING_FOR_INLINE_TIME);
         userSessionService.saveSession(userSession.getChatId(), userSession);
-        if( dispatchRequest.getUpdate().getMessage().getText().equals(cancel_data)){
-            userSession.setState(ConversationState.WAITING_FOR_CLICK_MENU);
-            userSessionService.saveSession(userSession.getChatId(), userSession);
-        }else if (weatherService.isValidDate(dispatchRequest.getUpdate().getMessage().getText())){
-            userSession.setState(ConversationState.WAITING_FOR_INLINE_TIME);
-            userSessionService.saveSession(userSession.getChatId(), userSession);
-        }
+
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.example.telegrambotweather.handler.handle;
 import com.example.telegrambotweather.Component.KeyboardHelper;
 import com.example.telegrambotweather.Model.UserRequest;
 import com.example.telegrambotweather.Model.UserSession;
-import com.example.telegrambotweather.Model.WeatherCity;
 import com.example.telegrambotweather.Service.TelegramService;
 import com.example.telegrambotweather.Service.UserSessionService;
 import com.example.telegrambotweather.Service.WeatherService;
@@ -11,27 +10,20 @@ import com.example.telegrambotweather.enums.ConversationState;
 import com.example.telegrambotweather.handler.UserRequestHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-
 @Component
-public class CityWeatherEnteredHandlerDays extends UserRequestHandler {
+public class WeatherDateTimeHandler extends UserRequestHandler {
 
     private final TelegramService telegramService;
     private final KeyboardHelper keyboardHelper;
     private final UserSessionService userSessionService;
-    public static String  cancel_data="Cancel\uD83D\uDDD9";
-//    @Autowired
+    //    @Autowired
 //    public  History<String> historyList;
     @Autowired
     private WeatherService weatherService;
-    @Autowired
-    private WeatherCity weatherCity;
-    public CityWeatherEnteredHandlerDays(TelegramService telegramService, KeyboardHelper keyboardHelper, UserSessionService userSessionService) {
+
+    public WeatherDateTimeHandler(TelegramService telegramService, KeyboardHelper keyboardHelper, UserSessionService userSessionService) {
         this.telegramService = telegramService;
         this.keyboardHelper = keyboardHelper;
         this.userSessionService = userSessionService;
@@ -41,26 +33,26 @@ public class CityWeatherEnteredHandlerDays extends UserRequestHandler {
     @Override
     public boolean isApplicable(UserRequest userRequest) {
         return isTextMessage(userRequest.getUpdate())
-                && (ConversationState.WAITING_FOR_INLINE_DATE.equals(userRequest.getUserSession().getState()) || ConversationState.WAITING_FOR_INLINE_TIME.equals(userRequest.getUserSession().getState()));
+                && ConversationState.WAITING_FOR_INLINE_TIME.equals(userRequest.getUserSession().getState()) && weatherService.isValidTime(userRequest.getUpdate().getMessage().getText().toString());
     }
 
     @Override
     public void handle(UserRequest userRequest) {
-        UserSession userSession = userRequest.getUserSession();
-        DeleteMessage deleteMessage = new DeleteMessage();
-        deleteMessage.setChatId(userRequest.getChatId().toString());
-        deleteMessage.setMessageId(userRequest.getUpdate().getMessage().getMessageId());
-        System.out.println(userRequest.getUpdate().getMessage().getText());
-        System.out.println(weatherCity.getDateList());
-       telegramService.execute(deleteMessage);
+        ReplyKeyboardMarkup replyKeyboardMarkup;
+        UserSession session = userRequest.getUserSession();
+        session.setTime(userRequest.getUpdate().getMessage().getText().toString());
+        replyKeyboardMarkup = keyboardHelper.buildMenuWithCancel(session.getHistory().getHistory());
+        telegramService.sendMessage(userRequest.getChatId(),"Enter the City⤵️",replyKeyboardMarkup);
 
+        session.setState(ConversationState.WAITING_FOR_CITY_DATETIME);
+        userSessionService.saveSession(session.getChatId(),session);
 
 
     }
+
     @Override
     public boolean isGlobal() {
-        return false;
+        return true;
     }
-
 
 }

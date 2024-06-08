@@ -1,18 +1,17 @@
 package com.example.telegrambotweather.Model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-
-@Setter
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 @Getter
+@Setter
 @Component
 public class WeatherCity {
 
@@ -22,7 +21,7 @@ public class WeatherCity {
     private int humidity;
     private String utc;
 
-    private int temperature;
+    private double temperature;
     private String weatherDescription;
     private String iconCode;
 
@@ -34,6 +33,7 @@ public class WeatherCity {
 
     private final DateTimeFormatter DateTimeformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final DateTimeFormatter Timeformatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private String DateTime;
 
     public WeatherCity(){};
     public String  getWeatherCity(JsonNode json){
@@ -81,5 +81,24 @@ public class WeatherCity {
         System.out.println(dateList);
         System.out.println(timeList);
 
+    }
+
+    public String getWeatherCityDateTime() {
+        return "City: "+City+";\n"+
+                "Country: "+Country+";\n"+
+                "Date Time: "+DateTime+";\n"+
+                "Temperature: "+temperature+"°C;\n"+
+                "Humidity: "+humidity+"%;\n"+
+                "Description: "+weatherDescription+";\n"+
+                "Sunset: "+sunset+";\n"+
+                "Sunrise: "+sunrise+";\n";
+    }
+
+    public void setSunset(long sunset,int timezone) {
+        this.sunset = LocalDateTime.ofInstant(Instant.ofEpochSecond(sunset), ZoneId.of(String.format("UTC+%s",timezone/3600))).format(Timeformatter);
+    }
+
+    public void setSunrise(long sunrise,int timezone) {
+        this.sunrise = LocalDateTime.ofInstant(Instant.ofEpochSecond(sunrise), ZoneId.of(String.format("UTC+%s",timezone/3600))).format(Timeformatter);
     }
 }

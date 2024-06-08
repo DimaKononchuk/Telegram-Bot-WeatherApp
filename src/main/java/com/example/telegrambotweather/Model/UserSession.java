@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
@@ -22,4 +23,11 @@ public class UserSession {
         history.add(city);
     }
 
+    public void setDate(String date) {
+        this.date = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public void setTime(String time) {
+        this.time = LocalTime.parse(time,DateTimeFormatter.ofPattern("HH:mm"));
+    }
 }

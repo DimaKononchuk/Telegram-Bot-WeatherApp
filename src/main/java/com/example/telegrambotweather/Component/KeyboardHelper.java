@@ -90,22 +90,7 @@ public class KeyboardHelper {
                 .oneTimeKeyboard(false)
                 .build();
     }
-    public InlineKeyboardMarkup buildMenuListDate(List<LocalDate> dateSet) {
-        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
-        for (LocalDate date : dateSet) {
-            InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText(date.toString());
-            button.setCallbackData(date.toString());
-
-            List<InlineKeyboardButton> rowInline = Collections.singletonList(button);
-            rowsInline.add(rowInline);
-        }
-
-        return InlineKeyboardMarkup.builder()
-                .keyboard(rowsInline)
-                .build();
-    }
     public ReplyKeyboardMarkup ReplybuildMenuListDate(List<LocalDate> dateSet) {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -136,8 +121,12 @@ public class KeyboardHelper {
             keyboard.add(row);
         }
         KeyboardRow row = new KeyboardRow();
-        KeyboardButton button = new KeyboardButton(cancel_data);
-        row.add(button);
+        KeyboardButton cancel = new KeyboardButton(cancel_data);
+        row.add(cancel);
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardButton back = new KeyboardButton("Back");
+        row1.add(back);
+        keyboard.add(row1);
         keyboard.add(row);
         return ReplyKeyboardMarkup.builder()
                 .keyboard(keyboard)
@@ -146,24 +135,5 @@ public class KeyboardHelper {
                 .oneTimeKeyboard(false)
                 .build();
     }
-    public InlineKeyboardMarkup buildMenuListTime(List<LocalDate> timeSet) {
-        List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
-        for (LocalDate date : timeSet) {
-            InlineKeyboardButton button = new InlineKeyboardButton(date.toString());
-            button.setCallbackData("date.toString()");
-
-            List<InlineKeyboardButton> rowInline = (List<InlineKeyboardButton>) button;
-            rowsInline.add(rowInline);
-
-        }
-        KeyboardRow row=new KeyboardRow();
-        InlineKeyboardButton inlineKeyboardButton=new InlineKeyboardButton();
-        inlineKeyboardButton.setText("fd");
-        inlineKeyboardButton.setCallbackData("gd");
-        row.add(String.valueOf(inlineKeyboardButton));
-        return InlineKeyboardMarkup.builder()
-                .keyboard((Collection<? extends List<InlineKeyboardButton>>) inlineKeyboardButton)
-                .build();
-    }
 }

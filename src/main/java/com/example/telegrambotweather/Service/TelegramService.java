@@ -31,7 +31,9 @@ public class TelegramService {
         SendMessage sendMessage =SendMessage
                 .builder()
                 .chatId(chatId.toString())
+
                 .build();
+
         execute(sendMessage);
     }
     public void sendMessage(Long chatId, String text, ReplyKeyboard replyKeyboard) {
@@ -40,7 +42,7 @@ public class TelegramService {
                 .text(text)
                 .chatId(chatId.toString())
                 //Other possible parse modes: MARKDOWNV2, MARKDOWN, which allows to make text bold, and all other things
-                .parseMode(ParseMode.MARKDOWNV2)
+
                 .replyMarkup(replyKeyboard)
                 .build();
         execute(sendMessage);

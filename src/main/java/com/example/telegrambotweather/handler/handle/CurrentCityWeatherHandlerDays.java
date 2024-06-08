@@ -34,7 +34,7 @@ public class CurrentCityWeatherHandlerDays extends UserRequestHandler {
 
     @Override
     public boolean isApplicable(UserRequest request) {
-        return isTextMessage(request.getUpdate(), current_data) ;
+        return isTextMessage(request.getUpdate(), current_data)|| isTextMessage(request.getUpdate(), "Back") ;
     }
 
     @Override
@@ -46,18 +46,8 @@ public class CurrentCityWeatherHandlerDays extends UserRequestHandler {
 
         userSession.setState(ConversationState.WAITING_FOR_INLINE_DATE);
         userSessionService.saveSession(userSession.getChatId(), userSession);
-        if( dispatchRequest.getUpdate().getMessage().getText().equals(cancel_data)){
-            userSession.setState(ConversationState.WAITING_FOR_CLICK_MENU);
-            userSessionService.saveSession(userSession.getChatId(), userSession);
-        }
-        if (weatherService.isValidDate(dispatchRequest.getUpdate().getMessage().getText())){
-            userSession.setState(ConversationState.WAITING_FOR_INLINE_TIME);
-            System.out.println("ok");
-            userSession.setDate(LocalDate.parse(dispatchRequest.getUpdate().getMessage().getText()));
-            userSessionService.saveSession(userSession.getChatId(), userSession);
-        }else{
-            System.out.println("false");
-        }
+
+
 
     }
 
