@@ -5,8 +5,8 @@ WeatherApp is a Telegram bot built using Spring Boot that provides weather infor
 
 ## Requirements
 
-- Java 11 or higher
-- Maven 3.6.0 or higher
+- Java 21 or higher
+- Maven 4.0.0 or higher
 - A [Telegram](https://telegram.org) account to create a bot
 - An API key from [OpenWeatherMap](https://openweathermap.org/api)
 
@@ -16,7 +16,7 @@ WeatherApp is a Telegram bot built using Spring Boot that provides weather infor
 
     ```bash
     git clone https://github.com/yourusername/WeatherApp.git
-    cd WeatherApp
+    cd Telegram-Bot-WeatherApp
     ```
 
 2. **Configure application properties:**
@@ -24,13 +24,12 @@ WeatherApp is a Telegram bot built using Spring Boot that provides weather infor
     Create a file named `application.properties` in the `src/main/resources` directory and add the following configuration:
 
     ```properties
+    telegram.bot.username=YOUT_BOT_NAME
+    telegram.bot.token=YOUR_TELEGRAM_TOKEN
     weather.api.key=YOUR_API_KEY
-    weather.api.url=http://api.openweathermap.org/data/2.5/weather
-    telegram.bot.username=YOUR_BOT_USERNAME
-    telegram.bot.token=YOUR_BOT_TOKEN
     ```
 
-    Replace `YOUR_API_KEY`, `YOUR_BOT_USERNAME`, and `YOUR_BOT_TOKEN` with your actual values.
+    Replace `YOUT_BOT_NAME`, `YOUR_TELEGRAM_TOKEN`, and `YOUR_API_KEY` with your actual values.
 
 3. **Build and run the application:**
 
@@ -45,32 +44,25 @@ After starting the application, your Telegram bot will be ready to receive reque
 
 ## Project Structure
 
-- **WeatherAppApplication.java** - The main class of the application.
-- **WeatherConfig.java** - Configuration class for storing the API key and base URL.
+- **TelegramBotWeatherApplication.java** - The main class of the application.
+- **MyTelegramBot.java** - Configuration class for storing the API key and base URL.
 - **WeatherService.java** - Service for fetching weather data from OpenWeatherMap.
-- **WeatherBot.java** - Controller for handling messages from the Telegram bot.
+- **UserRequestHandler.java** - Controller for handling messages from the Telegram bot.
 
 ## Example Code
 
 ### WeatherConfig.java
 
 ```java
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
 @Configuration
-public class WeatherConfig {
-    @Value("${weather.api.key}")
-    private String apiKey;
+public class BotConfig {
 
-    @Value("${weather.api.url}")
-    private String apiUrl;
+    @Bean
+    public TelegramBotsApi telegramBotsApi(TelegramLongPollingBot bot) throws TelegramApiException {
+        TelegramBotsApi botsApi=new TelegramBotsApi(DefaultBotSession.class);
+        botsApi.registerBot(bot);
 
-    public String getApiKey() {
-        return apiKey;
+        return botsApi;
     }
 
-    public String getApiUrl() {
-        return apiUrl;
-    }
 }
