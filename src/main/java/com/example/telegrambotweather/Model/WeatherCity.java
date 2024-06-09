@@ -9,7 +9,6 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 @Getter
 @Setter
 @Component
@@ -36,29 +35,6 @@ public class WeatherCity {
     private String DateTime;
 
     public WeatherCity(){};
-    public String  getWeatherCity(JsonNode json){
-        City=json.path("name").asText();
-        Country=new Locale("",json.path("sys").path("country").asText()).getDisplayCountry(Locale.ENGLISH);
-        ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(json.path("timezone").asInt());
-        temperature=json.path("main").path("temp").asInt();
-        humidity=json.path("main").path("humidity").asInt();
-        weatherDescription=json.path("weather").get(0).path("description").asText();
-
-        // Отримати зрушення у секундах від UTC
-        int timeOffset=json.path("timezone").asInt()/3600;
-
-        System.out.println(timeOffset);
-        sunset = LocalDateTime.ofInstant(Instant.ofEpochSecond(json.path("sys").path("sunset").asInt()), ZoneId.of(String.format("UTC+%s",timeOffset))).format(Timeformatter);
-        sunrise = LocalDateTime.ofInstant(Instant.ofEpochSecond(json.path("sys").path("sunrise").asInt()), ZoneId.of(String.format("UTC+%s",timeOffset))).format(Timeformatter);
-        return "City: "+City+";\n"+
-                "Country: "+Country+";\n"+
-                "Temperature: "+temperature+"°C;\n"+
-                "Humidity: "+humidity+"%;\n"+
-                "Description: "+weatherDescription+";\n"+
-                "Sunset: "+sunset+";\n"+
-                "Sunrise: "+sunrise+";\n";
-    }
-
 
     public void setDateTimeList(JsonNode json) {
 

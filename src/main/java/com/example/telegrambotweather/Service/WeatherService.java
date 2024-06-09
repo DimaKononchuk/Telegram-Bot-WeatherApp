@@ -1,6 +1,7 @@
 package com.example.telegrambotweather.Service;
 
 
+import com.example.telegrambotweather.Model.CityWeather;
 import com.example.telegrambotweather.Model.WeatherCity;
 import com.example.telegrambotweather.Model.WeatherEntry;
 import com.example.telegrambotweather.Model.WeatherResponse;
@@ -41,20 +42,10 @@ public class WeatherService {
     public String getWeather(String city) throws HttpClientErrorException.NotFound  {
         String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + weatherApi + "&units=metric";
         try {
-            JsonNode response = restTemplate.getForObject(url, JsonNode.class);
-
-            if (response != null) {
-                WeatherCity weatherCity=new WeatherCity();
-
-//                JsonNode main = response.path("main");
-//                String temperature = main.path("temp").asText();
-//                String weatherDescription = response.path("weather").get(0).path("description").asText();
-//                String country=response.path("sys").path("country").asText();
-
-                return weatherCity.getWeatherCity(response);
-            } else {
-                return "Could not fetch weather data.";
-            }
+            ObjectMapper mapper = new ObjectMapper();
+            String json=restTemplate.getForObject(url, String.class);
+            CityWeather weatherResponse = mapper.readValue(json, CityWeather.class);
+            return weatherResponse.getWeatherCity();
         } catch (HttpClientErrorException.NotFound e) {
             return "City not found, please try again⤵️";
         } catch (Exception e) {
@@ -119,7 +110,7 @@ public class WeatherService {
     public String getWeatherDateTime(String city,LocalDate date,LocalTime time) {
         HashMap<String,Double> cityGeoList=getGeocodingAPI(city);
         if(cityGeoList.size()!=0){
-            String url="http://api.openweathermap.org/data/2.5/forecast?lat="+cityGeoList.get("lat")+"&lon="+cityGeoList.get("lon")+"&appid="+weatherApi;
+            String url="http://api.openweathermap.org/data/2.5/forecast?lat="+cityGeoList.get("lat")+"&lon="+cityGeoList.get("lon")+"&appid="+weatherApi+"&units=metric";
             String DateTime=date.toString()+" "+time.toString()+":00";
             try {
                 ObjectMapper mapper = new ObjectMapper();
