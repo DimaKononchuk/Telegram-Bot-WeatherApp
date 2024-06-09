@@ -42,8 +42,8 @@ WeatherApp is a Telegram bot built using Spring Boot that provides weather infor
 
 After starting the application, your Telegram bot will be ready to receive requests. Open Telegram and find your bot by username, then send it the name of a city to get the current weather.
 ## Screenshot
-![Alt Text](https://prnt.sc/BYqSsj2-cf8w)
-![Alt Text](https://prnt.sc/b9jegllroBQE)
+![Screenshot_7](https://github.com/DimaKononchuk/Telegram-Bot-WeatherApp/assets/64828665/5226fa70-fa87-47cb-84de-abadf88e0e91)
+
 
 ## Project Structure
 
